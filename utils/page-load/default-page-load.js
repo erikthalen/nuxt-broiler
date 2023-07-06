@@ -10,6 +10,7 @@ function onEnter(el, style) {
   return new Promise(async resolve => {
     style.value = { opacity: 1 }
 
+    // access to the DOM
     const title = el.querySelector('h1')
     title.style.transform = 'translateY(20px)'
 

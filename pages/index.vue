@@ -1,7 +1,7 @@
 <script setup>
 const { data } = await useEndpoint('/api/dummy-endpoint', {
   // force refresh, for demo purposes
-  key: Date.now().toString(),
+  key: 'index',
   await: true,
 })
 </script>

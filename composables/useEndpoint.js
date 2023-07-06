@@ -1,22 +1,14 @@
 /**
  * global ref to current endpoint data
  */
-export const useEndpointData = ref(true)
-
-/**
- * preview token used in craft cms f.ex.
- */
-const getPreviewToken = () => {
-  const route = useRoute()
-  return route.query.token ? { token: route.query.token } : null
-}
+export const useEndpointData = ref(null)
 
 /**
  * useEndpoint
  *
  * wrapper for useFetch() with appended default values and some lifecycle control
  */
-export const useEndpoint = async (slug, options = {}) => {
+export const useEndpoint = (slug, options = {}) => {
   const config = useRuntimeConfig().public
   const token = getPreviewToken()
 
@@ -34,18 +26,36 @@ export const useEndpoint = async (slug, options = {}) => {
   })
 
   if (options.await) {
-    useEndpointData.value = null
-
-    watch(
-      response.pending,
-      () => {
-        useEndpointData.value = response.data.value
-      },
-      { immediate: true }
-    )
-  } else {
-    useEndpointData.value = {}
+    watchResponse(response)
   }
 
   return response
+}
+
+/**
+ * preview token used in craft cms f.ex.
+ */
+function getPreviewToken() {
+  const route = useRoute()
+  return route.query.token ? { token: route.query.token } : null
+}
+
+/**
+ * used for when the endpoint should be awaited.
+ * will inform usePageTransition about pending status and data
+ */
+function watchResponse(response) {
+  useEndpointData.value = 'pending'
+
+  watch(
+    response.pending,
+    () => {
+      setTimeout(() => {
+        if (response.pending.value) return
+
+        useEndpointData.value = response.data.value
+      })
+    },
+    { immediate: true }
+  )
 }

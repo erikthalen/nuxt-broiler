@@ -27,10 +27,10 @@ const pageTransitions = usePageTransition({
 
   // vue transition hooks that runs on every page shift
   globalCallbacks: {
-    onLeave() {
-      console.log('transition onLeave')
+    onLeave(el, payload) {
+      console.log('transition onLeave', payload)
     },
-    onEnter() {
+    onEnter(el, payload) {
       // onEnter have access to the new page's endpoint data if the page is awaited
       console.log('transition onEnter', useEndpointData.value)
     },

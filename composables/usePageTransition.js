@@ -1,4 +1,5 @@
-const runIfDefined = (fn, el) => (typeof fn === 'function' ? fn(el) : null)
+const runIfDefined = (fn, el, ...args) =>
+  typeof fn === 'function' ? fn(el, ...args) : null
 
 const waitFor = async callback => {
   return new Promise(resolve => {
@@ -14,7 +15,7 @@ const transitionController = (
   transitions,
   defaultTransition,
   globalCallbacks,
-  endpointData = ref(true)
+  endpointData = ref(null)
 ) => {
   const get = (from, type, ...args) => {
     if (!from?.name || !type || !transitions[from?.name]) {
@@ -41,13 +42,21 @@ const transitionController = (
 
   return {
     onBeforeLeave: el => {
-      runIfDefined(globalCallbacks.onBeforeLeave, el)
+      runIfDefined(
+        globalCallbacks.onBeforeLeave,
+        el,
+        router.transition.value?.payload
+      )
       get(router.transition.value, 'onBeforeLeave', el)
     },
 
     onLeave: async (el, done) => {
       try {
-        runIfDefined(globalCallbacks.onLeave, el)
+        runIfDefined(
+          globalCallbacks.onLeave,
+          el,
+          router.transition.value?.payload
+        )
         get(router.transition.value, 'onLeave', el, done)
       } catch (error) {
         console.log(error)
@@ -56,32 +65,47 @@ const transitionController = (
     },
 
     onAfterLeave: el => {
-      runIfDefined(globalCallbacks.onAfterLeave, el)
+      runIfDefined(
+        globalCallbacks.onAfterLeave,
+        el,
+        router.transition.value?.payload
+      )
       get(router.transition.value, 'onAfterLeave', el)
     },
 
     onBeforeEnter: el => {
-      runIfDefined(globalCallbacks.onBeforeEnter, el)
+      runIfDefined(
+        globalCallbacks.onBeforeEnter,
+        el,
+        router.transition.value?.payload
+      )
       get(router.transition.value, 'onBeforeEnter', el)
     },
 
     onEnter: async (el, done) => {
-      await waitFor(() => endpointData.value)
+      await waitFor(() => endpointData.value !== 'pending')
 
       try {
-        runIfDefined(globalCallbacks.onEnter, el)
+        runIfDefined(
+          globalCallbacks.onEnter,
+          el,
+          router.transition.value?.payload
+        )
         get(router.transition.value, 'onEnter', el, done)
       } catch (error) {
         console.log(error)
         done()
       }
-
     },
-    
+
     onAfterEnter: el => {
-      runIfDefined(globalCallbacks.onAfterEnter, el)
+      runIfDefined(
+        globalCallbacks.onAfterEnter,
+        el,
+        router.transition.value?.payload
+      )
       get(router.transition.value, 'onAfterEnter', el)
-      
+
       // cleanup itself
       router.transition.value = null
       endpointData.value = null
