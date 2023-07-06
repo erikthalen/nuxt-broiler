@@ -12,7 +12,7 @@ const { data } = await useEndpoint('/api/dummy-endpoint', {
     <p>
       This page's <code>useEndpoint</code> has
       <code>{ await: true }</code>.<br />
-      So the <code>onEnter</code> transition will first run when its data is in
+      So the <code>onEnter</code> transition will first run when its (newest) data is in
       the DOM:
     </p>
     <code>data: {{ data || 'null' }}</code>
