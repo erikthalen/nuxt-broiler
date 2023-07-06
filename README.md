@@ -46,34 +46,54 @@ const pageTransitions = usePageTransition()
 ### usage
 
 No option is required, but will enable more control.  
-Get started by copy-pasting the template file with all hooks.
+Get started by copy-pasting the template file with all hooks.  
+After a transition is finished, it's set back to `null`/default
 
 ```js
 // app.vue
-import defaultTransition from '~/defaultTransition'
-import anotherTransition from '~/anotherTransition'
-
 const pageTransitions = usePageTransition({
   // a ref to endpoint data populated by useEndpoint,
   // used when { await: true }
   endpointData: useEndpointData,
 
   // transition to run when no other is defined
-  defaultTransition: defaultTransition,
+  defaultTransition: {
+    // onBeforeLeave()
+    // onAfterLeave()
+    // onBeforeEnter()
+    // onEnter()
+    // onAfterEnter()
+    onLeave(el, done, payload) {
+      console.log('runs when the transition is not set')
+    }
+  },
 
   // individual transitions triggered by @click f.ex.
   transitions: {
-    another: anotherTransition,
+    another: {
+      // onBeforeLeave()
+      // onAfterLeave()
+      // onBeforeEnter()
+      // onEnter()
+      // onAfterEnter()
+      onLeave(el, done, payload) {
+        console.log('runs when the transition is set to "another"')
+      }
+    },
   },
 
   // vue transition hooks that runs on every page shift
   globalCallbacks: {
+    // onBeforeLeave()
+    // onAfterLeave()
+    // onBeforeEnter()
+    // onAfterEnter()
     onLeave(el, payload) {
-      console.log('runs on every onLeave')
+      console.log('runs on every onLeave, regardless of which transition is active')
     },
     onEnter(el, payload) {
       // onEnter have access to the new page's endpoint data if the page is awaited
-      console.log('runs on every onLeave', useEndpointData.value)
+      console.log('runs on every onEnter', useEndpointData.value)
     },
   },
 })
