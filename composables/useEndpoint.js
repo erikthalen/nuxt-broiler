@@ -1,12 +1,21 @@
-export const useEndpointIsPending = ref(false)
+/**
+ * global ref to current endpoint data
+ */
+export const useEndpointData = ref(true)
 
+/**
+ * preview token used in craft cms f.ex.
+ */
 const getPreviewToken = () => {
   const route = useRoute()
   return route.query.token ? { token: route.query.token } : null
 }
 
-// fetches cms-endpoints,
-// with default config applied
+/**
+ * useEndpoint
+ *
+ * wrapper for useFetch() with appended default values and some lifecycle control
+ */
 export const useEndpoint = async (slug, options = {}) => {
   const config = useRuntimeConfig().public
   const token = getPreviewToken()
@@ -25,11 +34,17 @@ export const useEndpoint = async (slug, options = {}) => {
   })
 
   if (options.await) {
-    useEndpointIsPending.value = response.pending.value
-    
-    watch(response.pending, () => {
-      useEndpointIsPending.value = response.pending.value
-    })
+    useEndpointData.value = null
+
+    watch(
+      response.pending,
+      () => {
+        useEndpointData.value = response.data.value
+      },
+      { immediate: true }
+    )
+  } else {
+    useEndpointData.value = {}
   }
 
   return response

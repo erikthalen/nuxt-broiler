@@ -3,8 +3,8 @@ export default defineEventHandler(async event => {
   return new Promise(resolve => {
     setTimeout(() => {
       resolve({
-        time: new Date(),
+        apiResponse: new Date(),
       })
-    }, 2000)
+    }, 4000)
   })
 })

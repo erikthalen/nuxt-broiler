@@ -1,10 +1,20 @@
 const runIfDefined = (fn, el) => (typeof fn === 'function' ? fn(el) : null)
 
+const waitFor = async callback => {
+  return new Promise(resolve => {
+    const tick = () => {
+      requestAnimationFrame(callback() ? resolve : tick)
+    }
+    tick()
+  })
+}
+
 const transitionController = (
   router,
   transitions,
   defaultTransition,
-  extendCallbacks
+  globalCallbacks,
+  endpointData = ref(true)
 ) => {
   const get = (from, type, ...args) => {
     if (!from?.name || !type || !transitions[from?.name]) {
@@ -17,26 +27,28 @@ const transitionController = (
       if (!defaultTransitionCurrentHook) return null
 
       // run default transition's hook
-      return defaultTransitionCurrentHook(...args, from?.target)
+      return defaultTransitionCurrentHook(...args, from?.payload)
     }
 
     // get the chosen transition's hook
     const handler = transitions[from.name][type]
 
     // run the chosen transition's hook
-    return typeof handler === 'function' ? handler(...args, from?.target) : null
+    return typeof handler === 'function'
+      ? handler(...args, from?.payload)
+      : null
   }
 
   return {
     onBeforeLeave: el => {
-      runIfDefined(extendCallbacks.onBeforeLeave, el)
-      get(router.transition, 'onBeforeLeave', el)
+      runIfDefined(globalCallbacks.onBeforeLeave, el)
+      get(router.transition.value, 'onBeforeLeave', el)
     },
 
     onLeave: async (el, done) => {
       try {
-        runIfDefined(extendCallbacks.onLeave, el)
-        get(router.transition, 'onLeave', el, done)
+        runIfDefined(globalCallbacks.onLeave, el)
+        get(router.transition.value, 'onLeave', el, done)
       } catch (error) {
         console.log(error)
         done()
@@ -44,31 +56,35 @@ const transitionController = (
     },
 
     onAfterLeave: el => {
-      runIfDefined(extendCallbacks.onAfterLeave, el)
-      get(router.transition, 'onAfterLeave', el)
+      runIfDefined(globalCallbacks.onAfterLeave, el)
+      get(router.transition.value, 'onAfterLeave', el)
     },
 
     onBeforeEnter: el => {
-      runIfDefined(extendCallbacks.onBeforeEnter, el)
-      get(router.transition, 'onBeforeEnter', el)
+      runIfDefined(globalCallbacks.onBeforeEnter, el)
+      get(router.transition.value, 'onBeforeEnter', el)
     },
 
-    onEnter: (el, done) => {
+    onEnter: async (el, done) => {
+      await waitFor(() => endpointData.value)
+
       try {
-        runIfDefined(extendCallbacks.onEnter, el)
-        get(router.transition, 'onEnter', el, done)
+        runIfDefined(globalCallbacks.onEnter, el)
+        get(router.transition.value, 'onEnter', el, done)
       } catch (error) {
         console.log(error)
         done()
       }
+
     },
-
+    
     onAfterEnter: el => {
-      runIfDefined(extendCallbacks.onAfterEnter, el)
-      get(router.transition, 'onAfterEnter', el)
-
+      runIfDefined(globalCallbacks.onAfterEnter, el)
+      get(router.transition.value, 'onAfterEnter', el)
+      
       // cleanup itself
-      router.transition = null
+      router.transition.value = null
+      endpointData.value = null
     },
   }
 }
@@ -76,9 +92,12 @@ const transitionController = (
 export default ({
   transitions = {},
   defaultTransition = {},
-  extendCallbacks = {},
+  globalCallbacks = {},
+  endpointData,
 } = {}) => {
   const router = useRouter()
+
+  router.transition = ref(null)
 
   return {
     css: false,
@@ -87,7 +106,8 @@ export default ({
       router,
       transitions,
       defaultTransition,
-      extendCallbacks
+      globalCallbacks,
+      endpointData
     ),
   }
 }
