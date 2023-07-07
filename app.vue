@@ -26,7 +26,7 @@ const pageTransitions = usePageTransition({
   },
 
   // vue transition hooks that runs on every page shift
-  globalCallbacks: {
+  globalHooks: {
     onLeave(el, payload) {
       console.log('transition onLeave', payload)
     },

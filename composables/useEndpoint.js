@@ -26,15 +26,13 @@ export const useEndpoint = (slug, options = {}) => {
   })
 
   if (options.await) {
-    if (options.await !== 'cache') {
-      watchResponse(response)
-    }
-
     if (options.await === 'cache') {
       const usedKey = options.key || uniqueKey
       const cachedData = useNuxtApp().payload.data[usedKey]
 
       watchResponse(response, cachedData)
+    } else {
+      watchResponse(response)
     }
   }
 

@@ -14,7 +14,7 @@ const transitionController = (
   router,
   transitions,
   defaultTransition,
-  globalCallbacks,
+  globalHooks,
   endpointData = ref(null)
 ) => {
   const get = (from, type, ...args) => {
@@ -43,7 +43,7 @@ const transitionController = (
   return {
     onBeforeLeave: el => {
       runIfDefined(
-        globalCallbacks.onBeforeLeave,
+        globalHooks.onBeforeLeave,
         el,
         router.transition.value?.payload
       )
@@ -53,7 +53,7 @@ const transitionController = (
     onLeave: async (el, done) => {
       try {
         runIfDefined(
-          globalCallbacks.onLeave,
+          globalHooks.onLeave,
           el,
           router.transition.value?.payload
         )
@@ -66,7 +66,7 @@ const transitionController = (
 
     onAfterLeave: el => {
       runIfDefined(
-        globalCallbacks.onAfterLeave,
+        globalHooks.onAfterLeave,
         el,
         router.transition.value?.payload
       )
@@ -75,7 +75,7 @@ const transitionController = (
 
     onBeforeEnter: el => {
       runIfDefined(
-        globalCallbacks.onBeforeEnter,
+        globalHooks.onBeforeEnter,
         el,
         router.transition.value?.payload
       )
@@ -87,7 +87,7 @@ const transitionController = (
 
       try {
         runIfDefined(
-          globalCallbacks.onEnter,
+          globalHooks.onEnter,
           el,
           router.transition.value?.payload
         )
@@ -100,7 +100,7 @@ const transitionController = (
 
     onAfterEnter: el => {
       runIfDefined(
-        globalCallbacks.onAfterEnter,
+        globalHooks.onAfterEnter,
         el,
         router.transition.value?.payload
       )
@@ -116,7 +116,7 @@ const transitionController = (
 export default ({
   transitions = {},
   defaultTransition = {},
-  globalCallbacks = {},
+  globalHooks = {},
   endpointData,
 } = {}) => {
   const router = useRouter()
@@ -130,7 +130,7 @@ export default ({
       router,
       transitions,
       defaultTransition,
-      globalCallbacks,
+      globalHooks,
       endpointData
     ),
   }

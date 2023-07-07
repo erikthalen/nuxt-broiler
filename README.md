@@ -2,7 +2,7 @@
 
 ## `useEndpoint`
 
-Wrapper for useFetch. Managing data fetching with the ability to inform `usePageTransition` about the current data.
+Wrapper for useFetch, with some added default settings. Managing data fetching with the ability to inform `usePageTransition` about the current data.
 
 ### setup
 
@@ -18,8 +18,8 @@ const { data } = await useEndpoint('/api/endpoint', {
 })
 ```
 
-`await` can be set to either:
-`true` - onEnter will not run until the latest data is back from the server.
+`await` can be set to either:  
+`true` - onEnter will not run until the latest data is back from the server.  
 `'cache'` - onEnter will run if/with any cached data stored on the useFetch.key, otherwise await the data from the server.
 
 ## `usePageTransition`
@@ -80,6 +80,7 @@ const pageTransitions = usePageTransition({
   },
 
   // vue transition hooks that runs on every page shift
+  // runs _before_ its corresponding hook above
   globalCallbacks: {
     // onBeforeLeave()
     // onAfterLeave()
@@ -96,19 +97,19 @@ const pageTransitions = usePageTransition({
 })
 ```
 
-Somewere in the app a transition can be triggered by:
+Somewhere in the app a transition can be triggered by:
 
 ```js
 // my-component.vue
 <script setup>
-  const router = useRouter()
+const router = useRouter()
   
-  const handleClick = () => {
-    router.transition.value = {
-      name: 'another', // should match a key in usePageTransition.transitions
-      payload: 'yeah', // data that's passed and available in the transition hooks
-    }
+const handleClick = () => {
+  router.transition.value = {
+    name: 'another', // should match a key in usePageTransition.transitions
+    payload: 'yeah', // data that's passed and available in the transition hooks
   }
+}
 </script>
 ```
 
@@ -130,12 +131,26 @@ Slimmer version of `usePageTransition`. Runs through it's hooks once, on initial
 const el = ref(null)
 
 const { style } = usePageLoad(el, {
+  defaultPageLoad: {
+    onBeforeEnter(el, style) {
+      console.log('runs on the server')
+    },
+    onEnter(el, style) {
+      console.log('runs when the layout is mounted')
+    },
+    onAfterEnter(el, style) {
+      console.log('runs after the onEnter is done')
+    },
+  },
   pageLoads: {
     /* add your page specific page load effects here */
     /* key is page-template-name and value is a page-load: */
-    index: frontpageLoad,
+    index: {
+      onBeforeEnter(el, style) {},
+      onEnter(el, style) {},
+      onAfterEnter(el, style) {},
+    },
   },
-  defaultPageLoad: defaultPageLoad,
 })
 ```
 
