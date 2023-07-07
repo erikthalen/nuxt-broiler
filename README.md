@@ -81,7 +81,7 @@ const pageTransitions = usePageTransition({
 
   // vue transition hooks that runs on every page shift
   // runs _before_ its corresponding hook above
-  globalCallbacks: {
+  globalHooks: {
     // onBeforeLeave()
     // onAfterLeave()
     // onBeforeEnter()
