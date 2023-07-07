@@ -2,14 +2,11 @@
 
 ## `useEndpoint`
 
-Wrapper for useFetch.  
-Managing data fetching with the ability to inform  
-`usePageTransition` about the current data.
+Wrapper for useFetch. Managing data fetching with the ability to inform `usePageTransition` about the current data.
 
 ### setup
 
-Add `runtimeConfig.public.API_URL` in `nuxt.config.js`,
-that will be used as `baseUrl` in useFetch().
+Add `runtimeConfig.public.API_URL` in `nuxt.config.js`, that will be used as `baseUrl` in useFetch().
 
 ### usage
 
@@ -17,15 +14,17 @@ Same as `useFetch`, except:
 
 ```js
 const { data } = await useEndpoint('/api/endpoint', {
-  await: true, // will make potential onEnter callback wait for data
+  await: true || 'cache', // will make potential onEnter callback wait for data
 })
 ```
 
+`await` can be set to either:
+`true` - onEnter will not run until the latest data is back from the server.
+`'cache'` - onEnter will run if/with any cached data stored on the useFetch.key, otherwise await the data from the server.
+
 ## `usePageTransition`
 
-Handles page transitions.  
-Exposes the same api as vue transition, with all the same hooks.  
-Gives the ability to choose between transitions on-the-fly.
+Handles page transitions. Exposes the same api as vue transition, with all the same hooks. Gives the ability to choose between transitions on-the-fly.
 
 ### setup
 
@@ -45,9 +44,7 @@ const pageTransitions = usePageTransition()
 
 ### usage
 
-No option is required, but will enable more control.  
-Get started by copy-pasting the template file with all hooks.  
-After a transition is finished, it's set back to `null`/default
+No option is required, but will enable more control. Get started by copy-pasting the template file with all hooks. After a transition is finished, it's set back to `null`/default.
 
 ```js
 // app.vue
@@ -124,9 +121,7 @@ Somewere in the app a transition can be triggered by:
 
 ## `usePageLoad`
 
-Slimmer version of `usePageTransition`.  
-Runs through it's hooks once, on initial page load.  
-Like `usePageTransition` it has the ability to trigger unique set of hooks depending on page-template.
+Slimmer version of `usePageTransition`. Runs through it's hooks once, on initial page load. Like `usePageTransition` it has the ability to trigger unique set of hooks depending on page-template.
 
 ### setup
 
@@ -157,15 +152,13 @@ Copy-paste the template file to get started.
 
 ## `useQuery`
 
-Not directly part of the transitions or data fetching.  
-But small and usable for managing url query params.
+Not directly part of the transitions or data fetching. But small and usable for managing url query params.
 
 ### usage
 
 Check the file for available functions.  
 
-More of a gotcha, but if the query object in useFetch is computed,  
-Nuxt will re-fetch on query updates:
+More of a gotcha, but if the query object in useFetch is computed, Nuxt will re-fetch on query updates:
 
 ```js
 const colorRef  = ref('red')

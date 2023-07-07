@@ -28,6 +28,7 @@ const handleClick = () => {
     <nav style="display: flex; gap: 1em">
       <nuxt-link to="/">Index</nuxt-link>
       <nuxt-link @click="handleClick" to="/another">Another</nuxt-link>
+      <nuxt-link to="/third">Third</nuxt-link>
     </nav>
 
     <slot />

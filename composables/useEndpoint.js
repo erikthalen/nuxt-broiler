@@ -26,7 +26,16 @@ export const useEndpoint = (slug, options = {}) => {
   })
 
   if (options.await) {
-    watchResponse(response)
+    if (options.await !== 'cache') {
+      watchResponse(response)
+    }
+
+    if (options.await === 'cache') {
+      const usedKey = options.key || uniqueKey
+      const cachedData = useNuxtApp().payload.data[usedKey]
+
+      watchResponse(response, cachedData)
+    }
   }
 
   return response
@@ -44,15 +53,14 @@ function getPreviewToken() {
  * used for when the endpoint should be awaited.
  * will inform usePageTransition about pending status and data
  */
-function watchResponse(response) {
-  useEndpointData.value = 'pending'
+function watchResponse(response, cachedData) {
+  useEndpointData.value = cachedData || 'pending'
 
   watch(
     response.pending,
     () => {
       setTimeout(() => {
-        if (response.pending.value) return
-
+        if (cachedData || response.pending.value) return
         useEndpointData.value = response.data.value
       })
     },

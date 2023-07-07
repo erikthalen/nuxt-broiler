@@ -30,6 +30,7 @@ export default (el, { pageLoads = {}, defaultPageLoad = {} } = {}) => {
 
     // after everything, global clean up
     style.value = null
+    useEndpointData.value = null
   })
 
   return { style }

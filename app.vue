@@ -69,7 +69,8 @@ body {
 code {
   background: #eee;
   color: dodgerblue;
-  padding: 0.1em 0.4em 0.2em;
+  padding: 0.2em 0.5em 0.3em;
   border-radius: 0.4em;
+  display: inline-block;
 }
 </style>

@@ -13,6 +13,6 @@ const { data } = await useEndpoint('/api/dummy-endpoint', {
       So the <code>onEnter</code> transition will run even if the data is not in
       the DOM:
     </p>
-    <code>data: {{ data || 'null' }}</code>
+    <pre><code>{{ data || 'null' }}</code></pre>
   </div>
 </template>
