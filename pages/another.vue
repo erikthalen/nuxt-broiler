@@ -2,6 +2,7 @@
 const { data } = await useEndpoint('/api/dummy-endpoint', {
   // force refresh, for demo purposes
   key: 'another',
+  lazy: false
 })
 </script>
 

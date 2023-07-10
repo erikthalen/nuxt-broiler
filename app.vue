@@ -49,7 +49,8 @@ const router = useRouter()
     <client-only>
       <code class="debug">
         useEndpointData: {{ useEndpointData || 'null' }}<br />
-        transition: {{ router.transition || 'null' }}
+        transition: {{ router.transition || 'null' }}<br />
+        usePageTransitionRunning: {{ usePageTransitionRunning }}
       </code>
     </client-only>
   </nuxt-layout>

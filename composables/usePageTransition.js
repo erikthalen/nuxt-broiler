@@ -1,14 +1,4 @@
-const runIfDefined = (fn, el, ...args) =>
-  typeof fn === 'function' ? fn(el, ...args) : null
-
-const waitFor = async callback => {
-  return new Promise(resolve => {
-    const tick = () => {
-      requestAnimationFrame(callback() ? resolve : tick)
-    }
-    tick()
-  })
-}
+export const usePageTransitionRunning = ref(false)
 
 const transitionController = (
   router,
@@ -42,6 +32,8 @@ const transitionController = (
 
   return {
     onBeforeLeave: el => {
+      usePageTransitionRunning.value = true
+
       runIfDefined(
         globalHooks.onBeforeLeave,
         el,
@@ -52,11 +44,7 @@ const transitionController = (
 
     onLeave: async (el, done) => {
       try {
-        runIfDefined(
-          globalHooks.onLeave,
-          el,
-          router.transition.value?.payload
-        )
+        runIfDefined(globalHooks.onLeave, el, router.transition.value?.payload)
         get(router.transition.value, 'onLeave', el, done)
       } catch (error) {
         console.log(error)
@@ -86,11 +74,7 @@ const transitionController = (
       await waitFor(() => endpointData.value !== 'pending')
 
       try {
-        runIfDefined(
-          globalHooks.onEnter,
-          el,
-          router.transition.value?.payload
-        )
+        runIfDefined(globalHooks.onEnter, el, router.transition.value?.payload)
         get(router.transition.value, 'onEnter', el, done)
       } catch (error) {
         console.log(error)
@@ -109,6 +93,7 @@ const transitionController = (
       // cleanup itself
       router.transition.value = null
       endpointData.value = null
+      usePageTransitionRunning.value = false
     },
   }
 }
@@ -134,4 +119,17 @@ export default ({
       endpointData
     ),
   }
+}
+
+function runIfDefined(fn, el, ...args) {
+  return typeof fn === 'function' ? fn(el, ...args) : null
+}
+
+async function waitFor(callback) {
+  return new Promise(resolve => {
+    const tick = () => {
+      requestAnimationFrame(callback() ? resolve : tick)
+    }
+    tick()
+  })
 }

@@ -7,6 +7,6 @@ export default defineEventHandler(async event => {
         url: event.node.res.req.url,
         createdAt: date.toLocaleTimeString('dk-DK'),
       })
-    }, 4000)
+    }, 3000)
   })
 })
