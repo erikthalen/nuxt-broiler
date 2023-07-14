@@ -62,6 +62,7 @@ const pageTransitions = usePageTransition({
     // onAfterEnter()
     onLeave(el, done, payload) {
       console.log('runs when the transition is not set')
+      done()
     }
   },
 
@@ -75,6 +76,7 @@ const pageTransitions = usePageTransition({
       // onAfterEnter()
       onLeave(el, done, payload) {
         console.log('runs when the transition is set to "another"')
+        done()
       }
     },
   },
